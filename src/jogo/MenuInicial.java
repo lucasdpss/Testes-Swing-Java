@@ -6,15 +6,22 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class MenuInicial{
 	
+	private JFrame frame;
 	private Image fundo;
+	private Clip clip;
 	
 	public MenuInicial() {
 		ImageIcon referencia = new ImageIcon("res\\menu.png");
@@ -23,9 +30,9 @@ public class MenuInicial{
 	
 	public void show() {
 
-        JFrame frame = new JFrame("Menu Bravia Escape");
+        frame = new JFrame("Menu Bravia Escape");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400); 
+        frame.setSize(1000, 500); 
         frame.setResizable(false);  
         frame.setLocationRelativeTo(null);
         
@@ -33,33 +40,34 @@ public class MenuInicial{
         painel.setLayout(null);
         frame.add(painel);
         
-        JButton botao1 = new JButton("Fase 1");
-        botao1.setBounds(200, 180, 100,70);
+        JButton botao1 = new JButton("Jogar");
+        botao1.setBounds(420, 200, 100,70);
         botao1.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Tela1 tela1 = new Tela1();
-				tela1.show();
-				
+				Tela1 fase1 = new Tela1();
+				fase1.show();
+				clip.stop();
+				frame.dispose();
 			}
 		});
         
         
-        JButton botao2 = new JButton("Fase 2");
-        botao2.setBounds(200 + 110, 180, 100,70);
+        JButton botao2 = new JButton("Sair");
+        botao2.setBounds(420, 200 + 80, 100,70);
         botao2.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Tela2 tela2 = new Tela2();
-				tela2.show();
+				System.exit(0);
 			}
 		});
         painel.add(botao1);
         painel.add(botao2);
         
         frame.setVisible(true);
+        playSound("sons//MenuMusic.wav");
 
     }
 	
@@ -76,6 +84,26 @@ public class MenuInicial{
 		}
 	}
 	
+	public void playSound(String musicLocation) {
+		
+	    try {
+			File musicPath = new File(musicLocation);
+			
+			if(musicPath.exists()) {
+				
+				AudioInputStream audioInput = AudioSystem.getAudioInputStream(musicPath);
+				clip = AudioSystem.getClip();
+				clip.open(audioInput);
+				clip.start();
+				clip.loop(Clip.LOOP_CONTINUOUSLY);
+				
+			}else {
+				System.out.println("nao achou arquivo de audio");
+			}
+	    }catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "erro no playsound");
+		}
+	}
 	
 }
 
